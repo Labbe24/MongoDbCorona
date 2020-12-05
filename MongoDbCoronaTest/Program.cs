@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDbCoronaTest.Models;
 
 namespace MongoDbCoronaTest
 {
@@ -221,24 +222,32 @@ namespace MongoDbCoronaTest
         };
         #endregion
 
+
         static void Main(string[] args)
         {
-            var client = new MongoClient();
-            var db = client.GetDatabase("CoronaDb");
-            var citizensCollection = db.GetCollection<Citizen>("Citizens");
-            var municipalitiesCollection = db.GetCollection<Municipality>("Municipalities");
+            var client = new DbClient(new MongoClient());
+            //TestAllCitizens(client);
+            foreach(var citizen in client.Citizens.Find(c => c.Tests.Count > 0).ToList())
+            {
+                Console.WriteLine("Name: {0} {1}",citizen.Firstname, citizen.Lastname);
+                foreach(var test in citizen.Tests)
+                {
+                    Console.WriteLine("Test result: {0}", test.result);
+                }
+            }
+            
 
-            //citizensCollection.DeleteMany(c => c.CitizenId > 0);
+            //client.Citizens.DeleteMany(c => c.CitizenId > 0);
             //--!Seed Citizens
             //foreach (var citizen in Citizens)
             //{
-            //    citizensCollection.InsertOne(citizen);
+            //    client.Citizens.InsertOne(citizen);
             //}
 
             //--!Seed Municipalities
             //foreach (var municipality in Municipalities)
             //{
-            //    municipalitiesCollection.InsertOne(municipality);
+            //    client.Municiaplities.InsertOne(municipality);
             //}
 
             //--!Find
@@ -261,67 +270,36 @@ namespace MongoDbCoronaTest
             //    Test = new Test[]{new Test(){date = DateTime.Now}}
             //});
 
-            var cit = citizensCollection.FindOneAndDelete(c => c.CitizenId == 2);
-            cit.Tests.Add(new Test{result = "Dicktive", date = DateTime.Now});
-            citizensCollection.InsertOne(cit);
-
-            
-
-
-
+            //var cit = citizensCollection.FindOneAndDelete(c => c.CitizenId == 2);
+            //cit.Tests.Add(new Test{result = "Dicktive", date = DateTime.Now});
+            //citizensCollection.InsertOne(cit);
         }
 
-    }
-
-    public class Citizen
-    {
-        public Citizen()
+        public static void AddCitizen(Citizen newCitizen, DbClient client)
         {
+            long id = client.Citizens.CountDocuments(c => c.CitizenId > 0);
+
+            newCitizen.CitizenId = (int)id;
+            client.Citizens.InsertOne(newCitizen);
         }
-        public Citizen(int citizenid, string firstname, string lastname, string ssn, int age, string sex)
+
+        public static void TestCitizen(int id, DbClient client)
         {
-            CitizenId = citizenid;
-            Firstname = firstname;
-            Lastname = lastname;
-            SSN = ssn;
-            Age = age;
-            Sex = sex;
-            Tests = new List<Test>();
+            var rand = new Random();
+            string testResult = rand.Next(0, 2) > 0 ? "positive" : "negative";
+            var updatedCitizen = client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
+            int testId = updatedCitizen.Tests.Count;
+
+            updatedCitizen.Tests.Add(new Test {TestId = testId, result = testResult, status = "done", date = DateTime.Now });
+            client.Citizens.InsertOne(updatedCitizen);
         }
-        public ObjectId _id { get; set; }
-        public int CitizenId { get; set; }
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-        public string SSN { get; set; }
-        public int Age { get; set; }
-        public string Sex { get; set; }
-        public int Municipality_id { get; set; }
-        public List<Test> Tests { get; set; }
-        public string[] TestCenter_id { get; set; }
-        public string[] Location_id { get; set; }
-    }
 
-    public class Test
-    {
-        public int TestId { get; set; }
-        public string result { get; set; }
-        public string status { get; set; }
-        public DateTime date { get; set; }
-    }
-
-
-    public class Municipality
-    {
-        public Municipality(int id, string name, int population)
+        public static void TestAllCitizens(DbClient client)
         {
-            MunicipalityId = id;
-            Name = name;
-            Population = population;
+            foreach(var citizen in client.Citizens.Find(c => c.CitizenId > 0).ToList())
+            {
+                TestCitizen(citizen.CitizenId, client);
+            }
         }
-        public ObjectId _id { get; set; }
-        public int MunicipalityId { get; set; }
-        public string Name { get; set; }
-        public int Population { get; set; }
-        public object[] Location_id { get; set; }
     }
 }
