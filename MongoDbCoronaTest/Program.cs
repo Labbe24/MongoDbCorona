@@ -227,27 +227,27 @@ namespace MongoDbCoronaTest
         {
             var client = new DbClient(new MongoClient());
             //TestAllCitizens(client);
-            foreach(var citizen in client.Citizens.Find(c => c.Tests.Count > 0).ToList())
-            {
-                Console.WriteLine("Name: {0} {1}",citizen.Firstname, citizen.Lastname);
-                foreach(var test in citizen.Tests)
-                {
-                    Console.WriteLine("Test result: {0}", test.result);
-                }
-            }
-            
+            //foreach (var citizen in client.Citizens.Find(c => c.Tests.Count > 0).ToList())
+            //{
+            //    Console.WriteLine("Name: {0} {1}", citizen.Firstname, citizen.Lastname);
+            //    foreach (var test in citizen.Tests)
+            //    {
+            //        Console.WriteLine("Test result: {0}", test.result);
+            //    }
+            //}
+
 
             //client.Citizens.DeleteMany(c => c.CitizenId > 0);
             //--!Seed Citizens
-            //foreach (var citizen in Citizens)
-            //{
-            //    client.Citizens.InsertOne(citizen);
-            //}
+            foreach (var citizen in Citizens)
+            {
+                client.Citizens.InsertOne(citizen);
+            }
 
             //--!Seed Municipalities
             //foreach (var municipality in Municipalities)
             //{
-            //    client.Municiaplities.InsertOne(municipality);
+            //    client.Municipalities.InsertOne(municipality);
             //}
 
             //--!Find
@@ -296,7 +296,8 @@ namespace MongoDbCoronaTest
 
         public static void TestAllCitizens(DbClient client)
         {
-            foreach(var citizen in client.Citizens.Find(c => c.CitizenId > 0).ToList())
+            var citizens = client.Citizens.Find(c => c.CitizenId > 0).ToList();
+            foreach(var citizen in citizens)
             {
                 TestCitizen(citizen.CitizenId, client);
             }

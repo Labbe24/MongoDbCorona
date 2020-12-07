@@ -12,11 +12,11 @@ namespace MongoDbCoronaTest
         {
             Db = client.GetDatabase("CoronaDb");
             Citizens = Db.GetCollection<Citizen>("Citizens");
-            Municiaplities = Db.GetCollection<Municipality>("Municipalities");
+            Municipalities = Db.GetCollection<Municipality>("Municipalities");
         }
         private IMongoDatabase Db;
 
         public IMongoCollection<Citizen> Citizens;
-        public IMongoCollection<Municipality> Municiaplities;
+        public IMongoCollection<Municipality> Municipalities;
     }
 }
