@@ -313,6 +313,26 @@ namespace MongoDbCoronaTest
 
             return tests.Count;
         }
+
+        public int FindCitizensAtTheSameLocations(DbClient client, int infectedCitizenId)
+        { 
+            var getInfectedCitizen = client.Citizens.Find(c => c.CitizenId == infectedCitizenId).Single();
+            List<Location> locations;
+
+            foreach (var location in getInfectedCitizen.Location_id)
+            {
+                locations = client.Locations.Find(l => l.LocationId == location).ToList();
+            }
+
+
+
+            var treeDaysBefore = DateTime.Now.AddDays(-3);
+            
+            var citizens = locations.Find(l => l.Registered.Any(r => r.Date >= treeDaysBefore)).ToList();
+
+
+        }
+
         #endregion
     }
 }
