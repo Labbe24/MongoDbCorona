@@ -8,8 +8,9 @@ namespace MongoDbCoronaTest.Models
     public class Test
     {
         public int TestId { get; set; }
-        public string result { get; set; }
-        public string status { get; set; }
-        public DateTime date { get; set; }
+        public string Result { get; set; }
+        public string Status { get; set; }
+        public DateTime Date { get; set; }
+        public int TestCenter_Id { get; set; }
     }
 }

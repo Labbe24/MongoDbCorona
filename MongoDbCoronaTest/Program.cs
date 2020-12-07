@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using MongoDbCoronaTest.Models;
 
 namespace MongoDbCoronaTest
@@ -222,59 +223,18 @@ namespace MongoDbCoronaTest
         };
         #endregion
 
-
         static void Main(string[] args)
         {
             var client = new DbClient(new MongoClient());
-            //TestAllCitizens(client);
-            //foreach (var citizen in client.Citizens.Find(c => c.Tests.Count > 0).ToList())
-            //{
-            //    Console.WriteLine("Name: {0} {1}", citizen.Firstname, citizen.Lastname);
-            //    foreach (var test in citizen.Tests)
-            //    {
-            //        Console.WriteLine("Test result: {0}", test.result);
-            //    }
-            //}
 
+            TestAllCitizens(client);
 
-            //client.Citizens.DeleteMany(c => c.CitizenId > 0);
-            //--!Seed Citizens
-            foreach (var citizen in Citizens)
-            {
-                client.Citizens.InsertOne(citizen);
-            }
+            int active = ActiveCovidCases(client);
+            Console.WriteLine("Active cases: {0}", active);
 
-            //--!Seed Municipalities
-            //foreach (var municipality in Municipalities)
-            //{
-            //    client.Municipalities.InsertOne(municipality);
-            //}
-
-            //--!Find
-            //var bots = citizensCollection
-            //    .Find(c => c.Age > 0)
-            //    .ToList();
-
-            //foreach (var bot in bots)
-            //{
-            //    Console.WriteLine($"{bot.Firstname}");
-            //}
-
-            //--!Update
-            //citizensCollection.UpdateOne(filter, update);
-
-            //--!Insert
-            //citizensCollection.InsertOne(new Citizen
-            //{
-            //    Lastname = "Jensmens",
-            //    Test = new Test[]{new Test(){date = DateTime.Now}}
-            //});
-
-            //var cit = citizensCollection.FindOneAndDelete(c => c.CitizenId == 2);
-            //cit.Tests.Add(new Test{result = "Dicktive", date = DateTime.Now});
-            //citizensCollection.InsertOne(cit);
         }
 
+        #region MongoMethods
         public static void AddCitizen(Citizen newCitizen, DbClient client)
         {
             long id = client.Citizens.CountDocuments(c => c.CitizenId > 0);
@@ -283,24 +243,76 @@ namespace MongoDbCoronaTest
             client.Citizens.InsertOne(newCitizen);
         }
 
-        public static void TestCitizen(int id, DbClient client)
+        public static void TestCitizen(int id, int testCenterId, DbClient client)
         {
             var rand = new Random();
             string testResult = rand.Next(0, 2) > 0 ? "positive" : "negative";
             var updatedCitizen = client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
             int testId = updatedCitizen.Tests.Count;
 
-            updatedCitizen.Tests.Add(new Test {TestId = testId, result = testResult, status = "done", date = DateTime.Now });
+            updatedCitizen.Tests.Add(new Test { TestId = testId, Result = testResult, Status = "done", Date = DateTime.Now, TestCenter_Id = testCenterId});
             client.Citizens.InsertOne(updatedCitizen);
         }
 
         public static void TestAllCitizens(DbClient client)
         {
+            var rand = new Random();
+            int range = (int)client.TestCenters.CountDocuments(t => t.TestCenterId >= 0);
             var citizens = client.Citizens.Find(c => c.CitizenId > 0).ToList();
-            foreach(var citizen in citizens)
+
+            foreach (var citizen in citizens)
             {
-                TestCitizen(citizen.CitizenId, client);
+                TestCitizen(citizen.CitizenId, rand.Next(0,range+1), client);
             }
         }
+
+        public static void AddLocation(int id, string address, int zip, DbClient client)
+        {
+            var location = client.Locations.Find(l => l.Address == address && l.Zip == zip).FirstOrDefault();
+            
+            if (location != null)
+            {
+                var updatedLocation = client.Locations.FindOneAndDelete(l => l.LocationId == location.LocationId);
+                updatedLocation.Registered.Add(new Registered{CitizenId = id, Date = DateTime.Now});
+                client.Locations.InsertOne(updatedLocation);
+            }
+            else
+            {
+                location = new Location{Address = address,
+                    Zip = zip,
+                    LocationId = (int)client.Locations.CountDocuments(l => l.LocationId >= 0)
+                };
+                location.Registered.Add(new Registered { CitizenId = id, Date = DateTime.Now });
+                client.Locations.InsertOne(location);
+            }
+
+            var updateCitizen = client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
+            updateCitizen.Location_id.Add(location.LocationId);
+            client.Citizens.InsertOne(updateCitizen);
+        }
+
+        public static void AddTestCenter(string name, int hours, int phonenumber, string email, DbClient client)
+        {
+            var testcenter = new TestCenter
+            {
+                TestCenterId = (int)client.TestCenters.CountDocuments(t=>t.TestCenterId >= 0),
+                Hours = hours,
+                TestCenterManagement = new Testcentermanagement{Phonenumber = phonenumber, Email = email}
+            };
+            client.TestCenters.InsertOne(testcenter);
+
+            var updatedMunicipality = client.Municipalities.FindOneAndDelete(m => m.Name == name);
+            updatedMunicipality.TestCenter_id.Add(testcenter.TestCenterId);
+            client.Municipalities.InsertOne(updatedMunicipality);
+        }
+
+        public static int ActiveCovidCases(DbClient client, int municipalityId)
+        {
+            var activeDate = DateTime.Now.AddDays(-14);
+            var tests = client.Citizens.Find(c => c.Tests.Any(t => t.Date >= activeDate && t.Result == "positive")).ToList();
+
+            return tests.Count;
+        }
+        #endregion
     }
 }

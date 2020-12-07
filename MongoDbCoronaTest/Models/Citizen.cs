@@ -19,6 +19,7 @@ namespace MongoDbCoronaTest.Models
             Age = age;
             Sex = sex;
             Tests = new List<Test>();
+            Location_id = new List<int>();
         }
         public ObjectId _id { get; set; }
         public int CitizenId { get; set; }
@@ -29,7 +30,6 @@ namespace MongoDbCoronaTest.Models
         public string Sex { get; set; }
         public int Municipality_id { get; set; }
         public List<Test> Tests { get; set; }
-        public string[] TestCenter_id { get; set; }
-        public string[] Location_id { get; set; }
+        public List<int> Location_id { get; set; }
     }
 }
