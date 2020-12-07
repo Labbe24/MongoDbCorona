@@ -11,6 +11,26 @@ namespace MongoDbCoronaTest
 {
     class Program
     {
+        #region SeedStuff
+        /*--!Seed Municipalities with Citizens*/
+        //var rand = new Random();
+
+        //List<Municipality> municis = new List<Municipality>();
+
+        //foreach (var muni in Municipalities)
+        //{
+        //    municis.Add(muni);
+        //}
+
+        //foreach (var cit in Citizens)
+        //{
+        //    int index = rand.Next(municis.Count());
+        //    var updatecit = Client.Citizens.FindOneAndDelete(c => c.CitizenId == cit.CitizenId);
+        //    updatecit.Municipality_id = municis[index].MunicipalityId;
+        //    Client.Citizens.InsertOne(updatecit);
+        //}
+        #endregion
+
         #region Citizens
         public static readonly Citizen[] Citizens =
         {
@@ -223,95 +243,202 @@ namespace MongoDbCoronaTest
         };
         #endregion
 
+        public static DbClient Client = new DbClient(new MongoClient());
+
         static void Main(string[] args)
         {
-            var client = new DbClient(new MongoClient());
-
-            TestAllCitizens(client);
-
-            int active = ActiveCovidCases(client);
-            Console.WriteLine("Active cases: {0}", active);
-
-        }
-
-        #region MongoMethods
-        public static void AddCitizen(Citizen newCitizen, DbClient client)
-        {
-            long id = client.Citizens.CountDocuments(c => c.CitizenId > 0);
-
-            newCitizen.CitizenId = (int)id;
-            client.Citizens.InsertOne(newCitizen);
-        }
-
-        public static void TestCitizen(int id, int testCenterId, DbClient client)
-        {
-            var rand = new Random();
-            string testResult = rand.Next(0, 2) > 0 ? "positive" : "negative";
-            var updatedCitizen = client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
-            int testId = updatedCitizen.Tests.Count;
-
-            updatedCitizen.Tests.Add(new Test { TestId = testId, Result = testResult, Status = "done", Date = DateTime.Now, TestCenter_Id = testCenterId});
-            client.Citizens.InsertOne(updatedCitizen);
-        }
-
-        public static void TestAllCitizens(DbClient client)
-        {
-            var rand = new Random();
-            int range = (int)client.TestCenters.CountDocuments(t => t.TestCenterId >= 0);
-            var citizens = client.Citizens.Find(c => c.CitizenId > 0).ToList();
-
-            foreach (var citizen in citizens)
+            bool run = true;
+            while (run)
             {
-                TestCitizen(citizen.CitizenId, rand.Next(0,range+1), client);
+                Console.WriteLine("[A] Add new Citizen");
+                Console.WriteLine("[B] Add new TestCenter and TestCenterManagement");
+                Console.WriteLine("[C] Add new Test");
+                Console.WriteLine("[D] Add Test to all Citizens");
+                Console.WriteLine("[E] Add new Location");
+                Console.WriteLine("[X] Quit");
+                Console.WriteLine("INPUT: ");
+
+                var userInput = Console.ReadKey();
+
+                switch (userInput.KeyChar)
+                {
+                    case 'A':
+                        /*TODO
+                            - Citizen needs a Municipality-Id */
+                        Console.Write("Firstname: ");
+                        string firstname = Console.ReadLine();
+                        Console.Write("Lastname: ");
+                        string lastname = Console.ReadLine();
+                        Console.Write("SSN (XXXXXX-XXXX): ");
+                        string ssn = Console.ReadLine();
+                        Console.Write("Age: ");
+                        string age = Console.ReadLine();
+                        Console.Write("Sex: ");
+                        string sex = Console.ReadLine();
+
+                        var newCitizen = new Citizen
+                        {
+                            Firstname = firstname,
+                            Lastname = lastname,
+                            SSN = ssn,
+                            Age = int.Parse(age),
+                            Sex = sex,
+                            Tests = new List<Test>(),
+                            Location_id = new List<int>()
+                        };
+
+                        AddCitizen(newCitizen);
+                        break;
+                    
+                    case 'B':
+                        /*TODO
+                         - TestCenter needs to be added to a municipality*/
+                        Console.Write("Hours: ");
+                        string hours = Console.ReadLine();
+                        Console.Write("Phonenumber: ");
+                        string phonenumber = Console.ReadLine();
+                        Console.Write("Email: ");
+                        string email = Console.ReadLine();
+
+                        var newTestCenter = new TestCenter
+                        {
+                            Hours = int.Parse(hours),
+                            TestCenterManagement = new Testcentermanagement{Phonenumber = int.Parse(phonenumber), Email = email}
+                        };
+                        break;
+                    
+                    case 'C':
+                        Console.Write("Citizen-ID: ");
+                        string citizenId = Console.ReadLine();
+                        Console.Write("TestCenter-ID: ");
+                        string testCenterId = Console.ReadLine();
+
+                        if (Client.TestCenters.Find(t => t.TestCenterId == int.Parse(testCenterId)).Any())
+                        {
+                            Console.WriteLine("No TestCenter with ID {0} exists.", testCenterId);
+                            break;
+                        }
+                        else if (Client.Citizens.Find(c => c.CitizenId == int.Parse(citizenId)).Any())
+                        {
+                            Console.WriteLine("No Citizen with ID {0} exists.", citizenId);
+                            break;
+                        }
+
+                        TestCitizen(int.Parse(citizenId), int.Parse(testCenterId));
+                        break;
+                    
+                    case 'D':
+                        break;
+
+                    case 'E':
+                        break;
+
+                    case 'X':
+                        run = false;
+                        break;
+
+                }
+
+                Console.ReadKey();
+                Console.Clear();
             }
         }
 
-        public static void AddLocation(int id, string address, int zip, DbClient client)
+        #region MongoMethods
+        public static void AddCitizen(Citizen newCitizen)
         {
-            var location = client.Locations.Find(l => l.Address == address && l.Zip == zip).FirstOrDefault();
+            long id = Client.Citizens.CountDocuments(c => c.CitizenId > 0);
+
+            newCitizen.CitizenId = (int)id;
+            Client.Citizens.InsertOne(newCitizen);
+        }
+
+        public static void TestCitizen(int id, int testCenterId)
+        {
+            var rand = new Random();
+            string testResult = rand.Next(0, 2) > 0 ? "positive" : "negative";
+            var updatedCitizen = Client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
+            int testId = updatedCitizen.Tests.Count;
+
+            updatedCitizen.Tests.Add(new Test { TestId = testId, Result = testResult, Status = "done", Date = DateTime.Now, TestCenter_Id = testCenterId});
+            Client.Citizens.InsertOne(updatedCitizen);
+        }
+
+        public static void TestAllCitizens()
+        {
+            var rand = new Random();
+            int range = (int)Client.TestCenters.CountDocuments(t => t.TestCenterId >= 0);
+            var citizens = Client.Citizens.Find(c => c.CitizenId > 0).ToList();
+
+            foreach (var citizen in citizens)
+            {
+                TestCitizen(citizen.CitizenId, rand.Next(0,range+1));
+            }
+        }
+
+        public static void AddLocation(int id, string address, int zip)
+        {
+            var location = Client.Locations.Find(l => l.Address == address && l.Zip == zip).FirstOrDefault();
             
             if (location != null)
             {
-                var updatedLocation = client.Locations.FindOneAndDelete(l => l.LocationId == location.LocationId);
+                var updatedLocation = Client.Locations.FindOneAndDelete(l => l.LocationId == location.LocationId);
                 updatedLocation.Registered.Add(new Registered{CitizenId = id, Date = DateTime.Now});
-                client.Locations.InsertOne(updatedLocation);
+                Client.Locations.InsertOne(updatedLocation);
             }
             else
             {
                 location = new Location{Address = address,
                     Zip = zip,
-                    LocationId = (int)client.Locations.CountDocuments(l => l.LocationId >= 0)
+                    LocationId = (int)Client.Locations.CountDocuments(l => l.LocationId >= 0)
                 };
                 location.Registered.Add(new Registered { CitizenId = id, Date = DateTime.Now });
-                client.Locations.InsertOne(location);
+                Client.Locations.InsertOne(location);
             }
 
-            var updateCitizen = client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
+            var updateCitizen = Client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
             updateCitizen.Location_id.Add(location.LocationId);
-            client.Citizens.InsertOne(updateCitizen);
+            Client.Citizens.InsertOne(updateCitizen);
         }
 
-        public static void AddTestCenter(string name, int hours, int phonenumber, string email, DbClient client)
+        public static void AddTestCenter(string name, int hours, int phonenumber, string email)
         {
             var testcenter = new TestCenter
             {
-                TestCenterId = (int)client.TestCenters.CountDocuments(t=>t.TestCenterId >= 0),
+                TestCenterId = (int)Client.TestCenters.CountDocuments(t=>t.TestCenterId >= 0),
                 Hours = hours,
                 TestCenterManagement = new Testcentermanagement{Phonenumber = phonenumber, Email = email}
             };
-            client.TestCenters.InsertOne(testcenter);
+            Client.TestCenters.InsertOne(testcenter);
 
-            var updatedMunicipality = client.Municipalities.FindOneAndDelete(m => m.Name == name);
+            var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m.Name == name);
             updatedMunicipality.TestCenter_id.Add(testcenter.TestCenterId);
-            client.Municipalities.InsertOne(updatedMunicipality);
+            Client.Municipalities.InsertOne(updatedMunicipality);
         }
 
-        public static int ActiveCovidCases(DbClient client, int municipalityId)
+        public static int ActiveCovidCases(string name)
         {
             var activeDate = DateTime.Now.AddDays(-14);
-            var tests = client.Citizens.Find(c => c.Tests.Any(t => t.Date >= activeDate && t.Result == "positive")).ToList();
+            var municipality = Client.Municipalities.Find(m => m.Name == name).Single();
+            int municipalityId = municipality.MunicipalityId;
+            var tests = Client.Citizens.Find(c => c.Municipality_id == municipalityId && c.Tests.Any(t => t.Date >= activeDate && t.Result == "positive")).ToList();
 
             return tests.Count;
+        }
+
+        public static int ActiveCovidCasesSex(string sex)
+        {
+            var cases = Client.Citizens.Find(c => c.Sex == sex && c.Tests.Any(t => t.Result == "positive")).ToList();
+            
+            return cases.Count;
+        }
+
+        public static int ActiveCovidCasesAge(int minAge, int maxAge)
+        {
+            var cases = Client.Citizens
+                .Find(c => c.Age >= minAge && c.Age <= maxAge && c.Tests.Any(t => t.Result == "positive")).ToList();
+
+            return cases.Count;
         }
         #endregion
     }
