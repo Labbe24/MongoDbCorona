@@ -123,12 +123,12 @@ namespace MongoDbCoronaTest
 
         public static readonly Municipality[] Municipalities =
         {
-            new Municipality(101, "København", 632340),
-            new Municipality(147, "Frederiksberg", 104305),
+            new Municipality(101, "København", 632340,9),
+            new Municipality(147, "Frederiksberg", 104305,10),
             new Municipality(151, "Ballerup", 48602),
             new Municipality(153, "Brøndby", 35090),
             new Municipality(155, "Dragør", 14494),
-            new Municipality(157, "Gentofte", 74830),
+            new Municipality(157, "Gentofte", 74830,16),
             new Municipality(159, "Gladsaxe", 69262),
             new Municipality(161, "Glostrup", 23128),
             new Municipality(163, "Herlev", 28953),
@@ -144,7 +144,7 @@ namespace MongoDbCoronaTest
             new Municipality(201, "Allerød", 25633),
             new Municipality(210, "Fredensborg", 40865),
             new Municipality(217, "Helsingør", 62695),
-            new Municipality(219, "Hillerød", 51183),
+            new Municipality(219, "Hillerød", 51183,15),
             new Municipality(223, "Hørsholm", 24864),
             new Municipality(230, "Rudersdal", 56728),
             new Municipality(240, "Egedal", 43354),
@@ -152,7 +152,7 @@ namespace MongoDbCoronaTest
             new Municipality(253, "Greve", 50558),
             new Municipality(259, "Køge", 60979),
             new Municipality(260, "Halsnæs", 31384),
-            new Municipality(265, "Roskilde", 87914),
+            new Municipality(265, "Roskilde", 87914,12),
             new Municipality(269, "Solrød", 23255),
             new Municipality(270, "Gribskov", 41048),
             new Municipality(306, "Odsherred", 32957),
@@ -162,7 +162,7 @@ namespace MongoDbCoronaTest
             new Municipality(329, "Ringsted", 34852),
             new Municipality(330, "Slagelse", 79073),
             new Municipality(336, "Stevns", 22805),
-            new Municipality(340, "Sorø", 29881),
+            new Municipality(340, "Sorø", 29881,13),
             new Municipality(350, "Lejre", 27996),
             new Municipality(360, "Lolland", 41105),
             new Municipality(370, "Næstved", 83143),
@@ -175,15 +175,15 @@ namespace MongoDbCoronaTest
             new Municipality(430, "Faaborg-Midtfyn", 51556),
             new Municipality(440, "Kerteminde", 23812),
             new Municipality(450, "Nyborg", 32008),
-            new Municipality(461, "Odense", 204895),
+            new Municipality(461, "Odense", 204895,8),
             new Municipality(479, "Svendborg", 58296),
             new Municipality(480, "Nordfyns", 29665),
             new Municipality(482, "Langeland", 12491),
-            new Municipality(492, "Ærø", 5964),
+            new Municipality(492, "Ærø", 5964,18),
             new Municipality(510, "Haderslev", 55670),
             new Municipality(530, "Billund", 26608),
-            new Municipality(540, "Sønderborg", 74220),
-            new Municipality(550, "Tønder", 37366),
+            new Municipality(540, "Sønderborg", 74220,14),
+            new Municipality(550, "Tønder", 37366,6),
             new Municipality(561, "Esbjerg", 115483),
             new Municipality(563, "Fanø", 3488),
             new Municipality(573, "Varde", 49961),
@@ -192,7 +192,7 @@ namespace MongoDbCoronaTest
             new Municipality(607, "Fredericia", 51377),
             new Municipality(615, "Horsens", 90966),
             new Municipality(621, "Kolding", 93175),
-            new Municipality(630, "Vejle", 115748),
+            new Municipality(630, "Vejle", 115748,1),
             new Municipality(657, "Herning", 89127),
             new Municipality(661, "Holstebro", 58591),
             new Municipality(665, "Lemvig", 19722),
@@ -201,27 +201,53 @@ namespace MongoDbCoronaTest
             new Municipality(707, "Norddjurs", 37089),
             new Municipality(710, "Favrskov", 48397),
             new Municipality(727, "Odder", 22844),
-            new Municipality(730, "Randers", 97805),
+            new Municipality(730, "Randers", 97805,17),
             new Municipality(740, "Silkeborg", 94026),
             new Municipality(741, "Samsø", 3657),
-            new Municipality(746, "Skanderborg", 62678),
-            new Municipality(751, "Aarhus", 349983),
-            new Municipality(756, "Ikast-Brande", 41369),
+            new Municipality(746, "Skanderborg", 62678,7),
+            new Municipality(751, "Aarhus", 349983,2),
+            new Municipality(756, "Ikast-Brande", 41369,3),
             new Municipality(760, "Ringkøbing-Skjern", 56594),
-            new Municipality(766, "Hedensted", 46722),
+            new Municipality(766, "Hedensted", 46722,5),
             new Municipality(773, "Morsø", 20247),
             new Municipality(779, "Skive", 45851),
             new Municipality(787, "Thisted", 43423),
             new Municipality(791, "Viborg", 96921),
             new Municipality(810, "Brønderslev", 36304),
-            new Municipality(813, "Frederikshavn", 59654),
+            new Municipality(813, "Frederikshavn", 59654,11),
             new Municipality(820, "Vesthimmerlands", 36727),
             new Municipality(825, "Læsø", 1786),
             new Municipality(840, "Rebild", 30113),
             new Municipality(846, "Mariagerfjord", 41800),
             new Municipality(849, "Jammerbugt", 38324),
-            new Municipality(851, "Aalborg", 217075),
+            new Municipality(851, "Aalborg", 217075,4),
             new Municipality(860, "Hjørring", 64483)
+        };
+        #endregion
+
+        #region Locations
+
+        public static readonly Location[] Locations =
+        {
+            new Location(1, "Christian Winthersvej 1", 7100),
+            new Location(2, "Mejlgade 42", 8000),
+            new Location(3, "Finnlandsgade 75", 8001),
+            new Location(4, "Gaden 24", 9100),
+            new Location(5, "Hvedelunden 37", 7822),
+            new Location(6, "Strucksalle 99", 6270),
+            new Location(7, "Adelgade 86", 8660),
+            new Location(8, "Nyborgvej 422", 5000),
+            new Location(9, "Jagtvej 223", 2200),
+            new Location(10, "H.C. Boulevard 3", 2201),
+            new Location(11, "Barfredsvej 83", 9900),
+            new Location(12,"Stormgade 48", 6700),
+            new Location(13,"Smedegade 13", 7400),
+            new Location(14, "Byrum Hovedgade 56", 9940),
+            new Location(15, "Søndergade 12", 8700),
+            new Location(16, "Østergade 34", 6000),
+            new Location(17, "Mokaivej 43", 8900),
+            new Location(18,"Schweiserpladsen 1", 4200)
+
         };
         #endregion
 
@@ -244,10 +270,12 @@ namespace MongoDbCoronaTest
                 Console.WriteLine("[C] Add new Test");
                 Console.WriteLine("[D] Add Test to all Citizens");
                 Console.WriteLine("[E] Add new Location");
-                Console.WriteLine("[F] Seed data");
-                Console.WriteLine("[G] View active cases for Municipalities");
-                Console.WriteLine("[H] View active cases by Sex");
-                Console.WriteLine("[I] View active cases by Age");
+                Console.WriteLine("[F] Add Locations to all Citizens");
+                Console.WriteLine("[G] Seed data");
+                Console.WriteLine("[H] View active cases for Municipalities");
+                Console.WriteLine("[I] View active cases by Sex");
+                Console.WriteLine("[J] View active cases by Age");
+                Console.WriteLine("[K] View possible cases by Location three days prior");
                 Console.WriteLine("[X] Quit");
                 Console.WriteLine("INPUT: ");
 
@@ -349,6 +377,13 @@ namespace MongoDbCoronaTest
 
                     case 'F':
                     {
+                        AddLocationToAllCitizen();
+                        Console.WriteLine("All Citizen have now locations");
+                    }
+                        break;
+
+                    case 'G':
+                    {
                         Console.WriteLine("Sure you want to seed? Seeding will reset all Citizens and Municipalities[Y/N]");
                         string userKey = Console.ReadLine();
 
@@ -361,19 +396,19 @@ namespace MongoDbCoronaTest
                     }
                         break;
 
-                    case 'G':
+                    case 'H':
                     {
                         testCenterService.ActiveCovidCasesPerMunicipality();
                     }
                         break;
 
-                    case 'H':
+                    case 'I':
                     {
                         testCenterService.ActiveCovidCasesSex();
                     }
                         break;
 
-                    case 'I':
+                    case 'J':
                     {
                         Console.Write("Min age: ");
                         int minAge = int.Parse(Console.ReadLine());
@@ -381,6 +416,22 @@ namespace MongoDbCoronaTest
                         int maxAge = int.Parse(Console.ReadLine());
                         int cases = testCenterService.ActiveCovidCasesAge(minAge, maxAge);
                         Console.WriteLine("Total number of cases: {0}", cases);
+                    }
+                        break;
+
+                    case 'K':
+                    {
+                        Console.Write("Infected citizen's ID: ");
+                        int citizenId = int.Parse(Console.ReadLine());
+                        List<Citizen> citizens = CitizensAtSameLocation(citizenId);
+                        Console.WriteLine("Citizens which has been the at the same location as an infected: ");
+                        foreach (var citizen in citizens)
+                        {
+                            Console.WriteLine("-------------------------------------------------------");
+                            Console.WriteLine($"Name: {citizen.Firstname} {citizen.Lastname}");
+                            Console.WriteLine($"SSN : {citizen.SSN}");
+                            Console.WriteLine("-------------------------------------------------------");
+                        }
                     }
                         break;
 
@@ -396,26 +447,218 @@ namespace MongoDbCoronaTest
             }
         }
 
-        #region SeedMethod
+        #region MongoMethods
+        public static void AddCitizen(Citizen newCitizen)
+        {
+            int id = (int)Client.Citizens.CountDocuments(c => c.CitizenId > 0);
+
+            newCitizen.CitizenId = id;
+            Client.Citizens.InsertOne(newCitizen);
+        }
+
+        public static void TestCitizen(int id, int testCenterId)
+        {
+            var rand = new Random();
+            string testResult = rand.Next(0, 2) > 0 ? "positive" : "negative";
+            var updatedCitizen = Client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
+            int testId = updatedCitizen.Tests.Count;
+
+            updatedCitizen.Tests.Add(new Test { TestId = testId, Result = testResult, Status = "done", Date = DateTime.Now, TestCenter_Id = testCenterId});
+            Client.Citizens.InsertOne(updatedCitizen);
+        }
+
+        public static void TestAllCitizens()
+        {
+            var rand = new Random();
+            int range = (int)Client.TestCenters.CountDocuments(t => t.TestCenterId >= 0);
+            var citizens = Client.Citizens.Find(c => c.CitizenId > 0).ToList();
+
+            foreach (var citizen in citizens)
+            {
+                TestCitizen(citizen.CitizenId, rand.Next(0,range+1));
+            }
+        }
+
+        public static void AddLocationToAllCitizen()
+        {
+            var rand = new Random();
+            int rangeMuncipality = (int)Client.Municipalities.CountDocuments(m => m.MunicipalityId >= 0);
+            var citizens = Client.Citizens.Find(c => c.CitizenId > 0).ToList();
+            Municipality municipality = new Municipality();
+            Location location = new Location();
+
+            foreach (var citizen in citizens)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    municipality = FindMunicipality(rand.Next(0, rangeMuncipality));
+                    int rangeList = (int)municipality.Location_id.Count();
+                    if (rangeList != 0)
+                    {
+                        int takeThis = rand.Next(1, rangeList + 1);
+                        int locationIdInMunicipaltyList = (int) municipality.Location_id[takeThis];
+
+                        location = FindLocation(locationIdInMunicipaltyList);
+
+                        AddLocation(citizen.CitizenId, location.Address, location.Zip, municipality.Name);
+                    }
+
+                }
+               
+            }
+        }
+
+        public static Municipality FindMunicipality(int id)
+        {
+            List<Municipality> municipalities = Client.Municipalities.Find(_ => true).ToList();
+            return municipalities[id];
+        }
+
+        public static Location FindLocation(int id)
+        {
+            return Client.Locations.Find(l => l.LocationId == id).SingleOrDefault();
+        }
+
+
+
+        public static void AddLocation(int citizenId, string address, int zip, string name)
+        {
+            var location = Client.Locations.Find(l => l.Address == address && l.Zip == zip).FirstOrDefault();
+            var municipality = Client.Municipalities.Find(m => m.Name == name).FirstOrDefault();
+
+            if (municipality == null)
+            {
+                Console.WriteLine("No municipality with name '{0}' exists.", name);
+                return;
+            }
+            
+            if (location != null)
+            {
+                var updatedLocation = Client.Locations.FindOneAndDelete(l => l == location);
+                updatedLocation.Registered.Add(new Registered{CitizenId = citizenId, Date = DateTime.Now});
+                Client.Locations.InsertOne(updatedLocation);
+            }
+            else
+            {
+                location = new Location{Address = address,
+                    Zip = zip,
+                    LocationId = (int)Client.Locations.CountDocuments(l => l.LocationId >= 0)
+                };
+                location.Registered.Add(new Registered { CitizenId = citizenId, Date = DateTime.Now });
+                Client.Locations.InsertOne(location);
+
+                // Insert new Location into Municipality
+                var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m == municipality);
+                updatedMunicipality.Location_id.Add(location.LocationId);
+                Client.Municipalities.InsertOne(municipality);
+            }
+
+            // Add LocationId into Citizens List
+            var updateCitizen = Client.Citizens.FindOneAndDelete(c => c.CitizenId == citizenId);
+            updateCitizen.Location_id.Add(location.LocationId);
+            Client.Citizens.InsertOne(updateCitizen);
+        }
+
+        public static void AddTestCenter(string name, int hours, int phonenumber, string email)
+        {
+            var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m.Name == name);
+
+            if (updatedMunicipality == null)
+            {
+                Console.WriteLine("No municipality with name '{0}' exists.", name);
+                return;
+            }
+
+            var testcenter = new TestCenter
+            {
+                TestCenterId = (int)Client.TestCenters.CountDocuments(t=>t.TestCenterId >= 0),
+                Hours = hours,
+                TestCenterManagement = new Testcentermanagement{Phonenumber = phonenumber, Email = email}
+            };
+            Client.TestCenters.InsertOne(testcenter);
+
+            updatedMunicipality.TestCenter_id.Add(testcenter.TestCenterId);
+            Client.Municipalities.InsertOne(updatedMunicipality);
+        }
+
+        public static int ActiveCovidCasesByMunicipalityName(string name)
+        {
+            var activeDate = DateTime.Now.AddDays(-14);
+            var municipality = Client.Municipalities.Find(m => m.Name == name).FirstOrDefault();
+            if (municipality == null)
+            {
+                Console.WriteLine("No municipality with name '{0}' exists.", name);
+                return 0;
+            }
+            int municipalityId = municipality.MunicipalityId;
+            var cases = Client.Citizens.Find(c => c.Municipality_id == municipalityId && c.Tests.Any(t => t.Date >= activeDate && t.Result == "positive")).ToList();
+
+            return cases.Count;
+        }
+
+        public static void ActiveCovidCasesPerMunicipality()
+        {
+            var municipalities = Client.Municipalities.Find(m => m._id != null).ToList();
+
+            Console.WriteLine("Municipality | Total number of Covid19 cases");
+            Console.WriteLine("============================================");
+
+            foreach (var municipality in municipalities)
+            {
+                int cases = ActiveCovidCasesByMunicipalityName(municipality.Name);
+                Console.WriteLine("{0}: {1}", municipality.Name, cases);
+            }
+        }
+
+        public static void ActiveCovidCasesSex()
+        {
+            var maleCases = Client.Citizens.Find(c => c.Sex == "male" && c.Tests.Any(t => t.Result == "positive")).ToList();
+            var femaleCases = Client.Citizens.Find(c => c.Sex == "female" && c.Tests.Any(t => t.Result == "positive")).ToList();
+            var eitherCases = Client.Citizens.Find(c => c.Sex == "either" && c.Tests.Any(t => t.Result == "positive")).ToList();
+            
+            int maleCount = maleCases.Count;
+            int femaleCount = femaleCases.Count;
+            int eitherCount = eitherCases.Count;
+
+            Console.WriteLine("Males infected: {0}", maleCount);
+            Console.WriteLine("Females infected: {0}", femaleCount);
+            Console.WriteLine("Either infected: {0}", eitherCount);
+        }
+
+        public static int ActiveCovidCasesAge(int minAge, int maxAge)
+        {
+            var cases = Client.Citizens
+                .Find(c => c.Age >= minAge && c.Age <= maxAge && c.Tests.Any(t => t.Result == "positive")).ToList();
+
+            return cases.Count;
+        }
+
         public static void Seed()
         {
             /*--!Delete Collections*/
-            Client.Citizens.DeleteMany(_ => true);
-            Client.Municipalities.DeleteMany(_ => true);
+            Client.Citizens.DeleteMany(c => c._id != null);
+            Client.Municipalities.DeleteMany(m => m._id != null);
 
             /*--!Seed Citizens*/
-            Client.Citizens.InsertMany(Citizens);
+            foreach (var citizen in Citizens)
+            {
+                Client.Citizens.InsertOne(citizen);
+            }
 
             /*--!Seed Municipalities*/
-            Client.Municipalities.InsertMany(Municipalities);
+            foreach (var municipality in Municipalities)
+            {
+                Client.Municipalities.InsertOne(municipality);
+            }
 
             /*--!Seed Municipalities with Citizens*/
             var rand = new Random();
-            List<Municipality> municipalities = Client.Municipalities.Find(_ => true).ToList();
-            
-            var locs = Client.Locations.Find(_ => true).ToList();
+            List<Municipality> municipalities = new List<Municipality>();
 
-
+            foreach (var municipality in Municipalities)
+            {
+                municipalities.Add(municipality);
+            }
 
             foreach (var citizen in Citizens)
             {
