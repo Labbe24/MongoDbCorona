@@ -7,9 +7,7 @@ namespace MongoDbCoronaTest.Models
 {
     public class Citizen
     {
-        public Citizen()
-        {
-        }
+        public Citizen() { }
         public Citizen(int citizenid, string firstname, string lastname, string ssn, int age, string sex)
         {
             CitizenId = citizenid;

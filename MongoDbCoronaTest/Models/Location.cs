@@ -19,7 +19,6 @@ namespace MongoDbCoronaTest.Models
         public List<Registered> Registered { get; set; }
     }
 
-
     public class Registered
     {
         public int CitizenId { get; set; }

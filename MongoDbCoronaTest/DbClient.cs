@@ -15,12 +15,15 @@ namespace MongoDbCoronaTest
             Municipalities = Db.GetCollection<Municipality>("Municipalities");
             Locations = Db.GetCollection<Location>("Locations");
             TestCenters = Db.GetCollection<TestCenter>("TestCenters");
+            Nations = Db.GetCollection<Nation>("Nations");
         }
-        private IMongoDatabase Db;
+
+        private readonly IMongoDatabase Db;
 
         public IMongoCollection<Citizen> Citizens;
         public IMongoCollection<Municipality> Municipalities;
         public IMongoCollection<Location> Locations;
         public IMongoCollection<TestCenter> TestCenters;
+        public IMongoCollection<Nation> Nations;
     }
 }
