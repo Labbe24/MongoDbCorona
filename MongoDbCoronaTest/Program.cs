@@ -224,6 +224,32 @@ namespace MongoDbCoronaTest
         };
         #endregion
 
+        #region Locations
+
+        public static readonly Location[] Locations =
+        {
+            new Location(1, "Christian Winthersvej 1", 7100),
+            new Location(2, "Mejlgade 42", 8000),
+            new Location(3, "Finnlandsgade 75", 8000),
+            new Location(4, "Gaden 24", 9100),
+            new Location(5, "Hvedelunden 37", 7822),
+            new Location(6, "Strucksalle 99", 6270),
+            new Location(7, "Adelgade 86", 8660),
+            new Location(8, "Nyborgvej 422", 5000),
+            new Location(9, "Jagtvej 223", 2200),
+            new Location(10, "H.C. Boulevard 3", 2200),
+            new Location(11, "Barfredsvej 83", 9900),
+            new Location(12,"Stormgade 48", 6700),
+            new Location(13,"Smedegade 13", 7400),
+            new Location(14, "Byrum Hovedgade 56", 9940),
+            new Location(15, "Søndergade 12", 8700),
+            new Location(16, "Østergade 34", 6000),
+            new Location(17, "Mokaivej 43", 8900),
+            new Location(18,"Schweiserpladsen 1", 4200)
+
+        };
+        #endregion
+
         public static DbClient Client = new DbClient(new MongoClient());
 
         static void Main(string[] args)

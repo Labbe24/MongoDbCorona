@@ -12,6 +12,15 @@ namespace MongoDbCoronaTest.Models
         {
             Registered = new List<Registered>();
         }
+
+        public Location(int locationId, string address, int zip)
+        {
+            LocationId = locationId;
+            Address = address;
+            Zip = zip;
+            Registered = new List<Registered>();
+        }
+
         public ObjectId _id { get; set; }
         public int LocationId { get; set; }
         public string Address { get; set; }
