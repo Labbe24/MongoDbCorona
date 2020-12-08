@@ -568,6 +568,27 @@ namespace MongoDbCoronaTest
                 Client.Citizens.InsertOne(updatedCitizen);
             }
         }
+
+        public static List<Citizen> CitizensAtSameLocation(DbClient dbClient, int infectedId)
+        {
+            var threeDaysPrior = DateTime.Now.AddDays(-3);
+
+            var possibleInfectedLocations = dbClient.Locations
+                .Find(l => l.Registered.Any(r => r.CitizenId == infectedId && r.Date > threeDaysPrior))
+                .ToList();
+
+            var ids = possibleInfectedLocations.SelectMany(l => l.Registered.Select(r => r.CitizenId));
+
+            List<Citizen> possibleInfectedCitizens = new List<Citizen>();
+
+            foreach (var id in ids)
+            {
+                possibleInfectedCitizens.Add(dbClient.Citizens.Find(c => c.CitizenId == id).SingleOrDefault());
+            }
+
+            return possibleInfectedCitizens;
+
+        }
         #endregion
     }
 }
