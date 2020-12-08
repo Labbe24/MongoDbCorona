@@ -280,8 +280,11 @@ namespace MongoDbCoronaTest
                         break;
 
                     case 'B':
+                    {
                         /*TODO
                          - TestCenter needs to be added to a municipality*/
+                        Console.Write("Municipality: ");
+                        string municipalityName = Console.ReadLine();
                         Console.Write("Hours: ");
                         int hours = int.Parse(Console.ReadLine());
                         Console.Write("Phonenumber: ");
@@ -289,11 +292,8 @@ namespace MongoDbCoronaTest
                         Console.Write("Email: ");
                         string email = Console.ReadLine();
 
-                        var newTestCenter = new TestCenter
-                        {
-                            Hours = hours,
-                            TestCenterManagement = new Testcentermanagement{Phonenumber = phonenumber, Email = email}
-                        };
+                        AddTestCenter(municipalityName, hours, phonenumber, email);
+                    }
                         break;
 
                     case 'C':
@@ -461,6 +461,14 @@ namespace MongoDbCoronaTest
 
         public static void AddTestCenter(string name, int hours, int phonenumber, string email)
         {
+            var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m.Name == name);
+
+            if (updatedMunicipality == null)
+            {
+                Console.WriteLine("No municipality with name '{0}' exists.", name);
+                return;
+            }
+
             var testcenter = new TestCenter
             {
                 TestCenterId = (int)Client.TestCenters.CountDocuments(t=>t.TestCenterId >= 0),
@@ -469,7 +477,6 @@ namespace MongoDbCoronaTest
             };
             Client.TestCenters.InsertOne(testcenter);
 
-            var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m.Name == name);
             updatedMunicipality.TestCenter_id.Add(testcenter.TestCenterId);
             Client.Municipalities.InsertOne(updatedMunicipality);
         }
@@ -481,6 +488,7 @@ namespace MongoDbCoronaTest
             if (municipality == null)
             {
                 Console.WriteLine("No municipality with name '{0}' exists.", name);
+                return 0;
             }
             int municipalityId = municipality.MunicipalityId;
             var cases = Client.Citizens.Find(c => c.Municipality_id == municipalityId && c.Tests.Any(t => t.Date >= activeDate && t.Result == "positive")).ToList();
@@ -514,10 +522,8 @@ namespace MongoDbCoronaTest
 
             Console.WriteLine("Males infected: {0}", maleCount);
             Console.WriteLine("Females infected: {0}", femaleCount);
-            Console.WriteLine("Eithers infected: {0}", eitherCount);
+            Console.WriteLine("Either infected: {0}", eitherCount);
         }
-
-
 
         public static int ActiveCovidCasesAge(int minAge, int maxAge)
         {
