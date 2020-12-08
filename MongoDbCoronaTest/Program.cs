@@ -236,10 +236,12 @@ namespace MongoDbCoronaTest
                 Console.WriteLine("[C] Add new Test");
                 Console.WriteLine("[D] Add Test to all Citizens");
                 Console.WriteLine("[E] Add new Location");
-                Console.WriteLine("[F] Seed data");
-                Console.WriteLine("[G] View active cases for Municipalities");
-                Console.WriteLine("[H] View active cases by Sex");
-                Console.WriteLine("[I] View active cases by Age");
+                Console.WriteLine("[F] Add Locations to all Citizens");
+                Console.WriteLine("[G] Seed data");
+                Console.WriteLine("[H] View active cases for Municipalities");
+                Console.WriteLine("[I] View active cases by Sex");
+                Console.WriteLine("[J] View active cases by Age");
+                Console.WriteLine("[K] View possible cases by Location three days prior");
                 Console.WriteLine("[X] Quit");
                 Console.WriteLine("INPUT: ");
 
@@ -342,6 +344,13 @@ namespace MongoDbCoronaTest
 
                     case 'F':
                     {
+                        AddLocationToAllCitizen();
+                        Console.WriteLine("All Citizen have now locations");
+                    }
+                        break;
+
+                    case 'G':
+                    {
                         Console.WriteLine("Sure you want to seed? Seeding will reset all Citizens and Municipalities[Y/N]");
                         string userKey = Console.ReadLine();
 
@@ -354,19 +363,19 @@ namespace MongoDbCoronaTest
                     }
                         break;
 
-                    case 'G':
+                    case 'H':
                     {
                         ActiveCovidCasesPerMunicipality();
                     }
                         break;
 
-                    case 'H':
+                    case 'I':
                     {
                         ActiveCovidCasesSex();
                     }
                         break;
 
-                    case 'I':
+                    case 'J':
                     {
                         Console.Write("Min age: ");
                         int minAge = int.Parse(Console.ReadLine());
@@ -374,6 +383,22 @@ namespace MongoDbCoronaTest
                         int maxAge = int.Parse(Console.ReadLine());
                         int cases = ActiveCovidCasesAge(minAge, maxAge);
                         Console.WriteLine("Total number of cases: {0}", cases);
+                    }
+                        break;
+
+                    case 'K':
+                    {
+                        Console.Write("Infected citizen's ID: ");
+                        int citizenId = int.Parse(Console.ReadLine());
+                        List<Citizen> citizens = CitizensAtSameLocation(citizenId);
+                        Console.WriteLine("Citizens which has been the at the same location as an infected: ");
+                        foreach (var citizen in citizens)
+                        {
+                            Console.WriteLine("-------------------------------------------------------");
+                            Console.WriteLine($"Name: {citizen.Firstname} {citizen.Lastname}");
+                            Console.WriteLine($"SSN : {citizen.SSN}");
+                            Console.WriteLine("-------------------------------------------------------");
+                        }
                     }
                         break;
 
@@ -420,6 +445,48 @@ namespace MongoDbCoronaTest
                 TestCitizen(citizen.CitizenId, rand.Next(0,range+1));
             }
         }
+
+        public static void AddLocationToAllCitizen()
+        {
+            var rand = new Random();
+            int rangeMuncipality = (int)Client.Municipalities.CountDocuments(m => m.MunicipalityId >= 0);
+            var citizens = Client.Citizens.Find(c => c.CitizenId > 0).ToList();
+            Municipality municipality = new Municipality();
+            Location location = new Location();
+
+            foreach (var citizen in citizens)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    municipality = FindMunicipality(rand.Next(0, rangeMuncipality + 1));
+                    int rangeList = (int)municipality.Location_id.Count();
+                    if (rangeList != 0)
+                    {
+                        int takeThis = rand.Next(1, rangeList + 1);
+                        int locationIdInMunicipaltyList = (int) municipality.Location_id[takeThis];
+
+                        location = FindLocation(locationIdInMunicipaltyList);
+
+                        AddLocation(citizen.CitizenId, location.Address, location.Zip, municipality.Name);
+                    }
+
+                }
+               
+            }
+        }
+
+        public static Municipality FindMunicipality(int id)
+        {
+            List<Municipality> municipalities = Client.Municipalities.Find(_ => true).ToList();
+            return municipalities[id];
+        }
+
+        public static Location FindLocation(int id)
+        {
+            return Client.Locations.Find(l => l.LocationId == id).SingleOrDefault();
+        }
+
+
 
         public static void AddLocation(int citizenId, string address, int zip, string name)
         {
@@ -569,11 +636,11 @@ namespace MongoDbCoronaTest
             }
         }
 
-        public static List<Citizen> CitizensAtSameLocation(DbClient dbClient, int infectedId)
+        public static List<Citizen> CitizensAtSameLocation(int infectedId)
         {
             var threeDaysPrior = DateTime.Now.AddDays(-3);
 
-            var possibleInfectedLocations = dbClient.Locations
+            var possibleInfectedLocations = Client.Locations
                 .Find(l => l.Registered.Any(r => r.CitizenId == infectedId && r.Date > threeDaysPrior))
                 .ToList();
 
@@ -583,7 +650,7 @@ namespace MongoDbCoronaTest
 
             foreach (var id in ids)
             {
-                possibleInfectedCitizens.Add(dbClient.Citizens.Find(c => c.CitizenId == id).SingleOrDefault());
+                possibleInfectedCitizens.Add(Client.Citizens.Find(c => c.CitizenId == id).SingleOrDefault());
             }
 
             return possibleInfectedCitizens;

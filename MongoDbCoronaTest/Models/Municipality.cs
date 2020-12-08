@@ -7,6 +7,8 @@ namespace MongoDbCoronaTest.Models
 {
     public class Municipality
     {
+        public Municipality()
+        {}
         public Municipality(int id, string name, int population)
         {
             MunicipalityId = id;
