@@ -12,10 +12,12 @@ namespace MongoDbCoronaTest.Services
     public class LocationService
     {
         private readonly DbClient client;
+        private readonly MunicipalityService municipalityService;
 
-        public LocationService(DbClient client)
+        public LocationService(DbClient client, MunicipalityService municipalityService)
         {
             this.client = client;
+            this.municipalityService = municipalityService;
         }
 
         public void AddLocation(int citizenId, string address, int zip, string name)
@@ -57,5 +59,41 @@ namespace MongoDbCoronaTest.Services
             updateCitizen.Location_id.Add(location.LocationId);
             client.Citizens.InsertOne(updateCitizen);
         }
+
+        public void AddLocationToAllCitizen()
+        {
+            var rand = new Random();
+            int rangeMuncipality = (int)client.Municipalities.CountDocuments(m => m.MunicipalityId >= 0);
+            var citizens = client.Citizens.Find(c => c.CitizenId > 0).ToList();
+            Municipality municipality = new Municipality();
+            Location location = new Location();
+
+            foreach (var citizen in citizens)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    municipality = municipalityService.FindMunicipality(rand.Next(0, rangeMuncipality));
+                    int rangeList = (int)municipality.Location_id.Count();
+                    if (rangeList != 0)
+                    {
+                        int takeThis = rand.Next(0, rangeList);
+                        int locationIdInMunicipaltyList = (int)municipality.Location_id[takeThis];
+
+                        location = FindLocation(locationIdInMunicipaltyList);
+
+                        AddLocation(citizen.CitizenId, location.Address, location.Zip, municipality.Name);
+                    }
+
+                }
+
+            }
+        }
+
+        public Location FindLocation(int id)
+        {
+            return client.Locations.Find(l => l.LocationId == id).SingleOrDefault();
+        }
+
+        
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using MongoDB.Driver;
+using MongoDbCoronaTest.Models;
 
 namespace MongoDbCoronaTest.Services
 {
@@ -23,6 +24,12 @@ namespace MongoDbCoronaTest.Services
             }
 
             return municipality.MunicipalityId;
+        }
+
+        public Municipality FindMunicipality(int id)
+        {
+            List<Municipality> municipalities = client.Municipalities.Find(_ => true).ToList();
+            return municipalities[id];
         }
     }
 }

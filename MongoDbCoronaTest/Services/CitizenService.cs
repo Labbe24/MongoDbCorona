@@ -24,5 +24,26 @@ namespace MongoDbCoronaTest.Services
             newCitizen.CitizenId = id;
             client.Citizens.InsertOne(newCitizen);
         }
+
+        public List<Citizen> CitizensAtSameLocation(int infectedId)
+        {
+            var threeDaysPrior = DateTime.Now.AddDays(-3);
+
+            var possibleInfectedLocations = client.Locations
+                .Find(l => l.Registered.Any(r => r.CitizenId == infectedId && r.Date > threeDaysPrior))
+                .ToList();
+
+            var ids = possibleInfectedLocations.SelectMany(l => l.Registered.Select(r => r.CitizenId));
+
+            List<Citizen> possibleInfectedCitizens = new List<Citizen>();
+
+            foreach (var id in ids)
+            {
+                possibleInfectedCitizens.Add(client.Citizens.Find(c => c.CitizenId == id).SingleOrDefault());
+            }
+
+            return possibleInfectedCitizens;
+
+        }
     }
 }

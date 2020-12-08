@@ -257,8 +257,8 @@ namespace MongoDbCoronaTest
         {
             DbClient client = new DbClient(new MongoClient());
             var citizenService = new CitizenService(Client);
-            var locationService = new LocationService(Client);
             var municipalityService = new MunicipalityService(Client);
+            var locationService = new LocationService(Client, municipalityService);
             var testCenterService = new TestCenterService(Client);
             var testService = new TestService(Client);
 
@@ -377,7 +377,7 @@ namespace MongoDbCoronaTest
 
                     case 'F':
                     {
-                        AddLocationToAllCitizen();
+                        locationService.AddLocationToAllCitizen();
                         Console.WriteLine("All Citizen have now locations");
                     }
                         break;
@@ -423,7 +423,7 @@ namespace MongoDbCoronaTest
                     {
                         Console.Write("Infected citizen's ID: ");
                         int citizenId = int.Parse(Console.ReadLine());
-                        List<Citizen> citizens = CitizensAtSameLocation(citizenId);
+                        List<Citizen> citizens = citizenService.CitizensAtSameLocation(citizenId);
                         Console.WriteLine("Citizens which has been the at the same location as an infected: ");
                         foreach (var citizen in citizens)
                         {
@@ -446,198 +446,14 @@ namespace MongoDbCoronaTest
                 Console.Clear();
             }
         }
-
         #region MongoMethods
-        public static void AddCitizen(Citizen newCitizen)
-        {
-            int id = (int)Client.Citizens.CountDocuments(c => c.CitizenId > 0);
-
-            newCitizen.CitizenId = id;
-            Client.Citizens.InsertOne(newCitizen);
-        }
-
-        public static void TestCitizen(int id, int testCenterId)
-        {
-            var rand = new Random();
-            string testResult = rand.Next(0, 2) > 0 ? "positive" : "negative";
-            var updatedCitizen = Client.Citizens.FindOneAndDelete(c => c.CitizenId == id);
-            int testId = updatedCitizen.Tests.Count;
-
-            updatedCitizen.Tests.Add(new Test { TestId = testId, Result = testResult, Status = "done", Date = DateTime.Now, TestCenter_Id = testCenterId});
-            Client.Citizens.InsertOne(updatedCitizen);
-        }
-
-        public static void TestAllCitizens()
-        {
-            var rand = new Random();
-            int range = (int)Client.TestCenters.CountDocuments(t => t.TestCenterId >= 0);
-            var citizens = Client.Citizens.Find(c => c.CitizenId > 0).ToList();
-
-            foreach (var citizen in citizens)
-            {
-                TestCitizen(citizen.CitizenId, rand.Next(0,range+1));
-            }
-        }
-
-        public static void AddLocationToAllCitizen()
-        {
-            var rand = new Random();
-            int rangeMuncipality = (int)Client.Municipalities.CountDocuments(m => m.MunicipalityId >= 0);
-            var citizens = Client.Citizens.Find(c => c.CitizenId > 0).ToList();
-            Municipality municipality = new Municipality();
-            Location location = new Location();
-
-            foreach (var citizen in citizens)
-            {
-                for (int i = 0; i < 3; i++)
-                {
-                    municipality = FindMunicipality(rand.Next(0, rangeMuncipality));
-                    int rangeList = (int)municipality.Location_id.Count();
-                    if (rangeList != 0)
-                    {
-                        int takeThis = rand.Next(1, rangeList + 1);
-                        int locationIdInMunicipaltyList = (int) municipality.Location_id[takeThis];
-
-                        location = FindLocation(locationIdInMunicipaltyList);
-
-                        AddLocation(citizen.CitizenId, location.Address, location.Zip, municipality.Name);
-                    }
-
-                }
-               
-            }
-        }
-
-        public static Municipality FindMunicipality(int id)
-        {
-            List<Municipality> municipalities = Client.Municipalities.Find(_ => true).ToList();
-            return municipalities[id];
-        }
-
-        public static Location FindLocation(int id)
-        {
-            return Client.Locations.Find(l => l.LocationId == id).SingleOrDefault();
-        }
-
-
-
-        public static void AddLocation(int citizenId, string address, int zip, string name)
-        {
-            var location = Client.Locations.Find(l => l.Address == address && l.Zip == zip).FirstOrDefault();
-            var municipality = Client.Municipalities.Find(m => m.Name == name).FirstOrDefault();
-
-            if (municipality == null)
-            {
-                Console.WriteLine("No municipality with name '{0}' exists.", name);
-                return;
-            }
-            
-            if (location != null)
-            {
-                var updatedLocation = Client.Locations.FindOneAndDelete(l => l == location);
-                updatedLocation.Registered.Add(new Registered{CitizenId = citizenId, Date = DateTime.Now});
-                Client.Locations.InsertOne(updatedLocation);
-            }
-            else
-            {
-                location = new Location{Address = address,
-                    Zip = zip,
-                    LocationId = (int)Client.Locations.CountDocuments(l => l.LocationId >= 0)
-                };
-                location.Registered.Add(new Registered { CitizenId = citizenId, Date = DateTime.Now });
-                Client.Locations.InsertOne(location);
-
-                // Insert new Location into Municipality
-                var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m == municipality);
-                updatedMunicipality.Location_id.Add(location.LocationId);
-                Client.Municipalities.InsertOne(municipality);
-            }
-
-            // Add LocationId into Citizens List
-            var updateCitizen = Client.Citizens.FindOneAndDelete(c => c.CitizenId == citizenId);
-            updateCitizen.Location_id.Add(location.LocationId);
-            Client.Citizens.InsertOne(updateCitizen);
-        }
-
-        public static void AddTestCenter(string name, int hours, int phonenumber, string email)
-        {
-            var updatedMunicipality = Client.Municipalities.FindOneAndDelete(m => m.Name == name);
-
-            if (updatedMunicipality == null)
-            {
-                Console.WriteLine("No municipality with name '{0}' exists.", name);
-                return;
-            }
-
-            var testcenter = new TestCenter
-            {
-                TestCenterId = (int)Client.TestCenters.CountDocuments(t=>t.TestCenterId >= 0),
-                Hours = hours,
-                TestCenterManagement = new Testcentermanagement{Phonenumber = phonenumber, Email = email}
-            };
-            Client.TestCenters.InsertOne(testcenter);
-
-            updatedMunicipality.TestCenter_id.Add(testcenter.TestCenterId);
-            Client.Municipalities.InsertOne(updatedMunicipality);
-        }
-
-        public static int ActiveCovidCasesByMunicipalityName(string name)
-        {
-            var activeDate = DateTime.Now.AddDays(-14);
-            var municipality = Client.Municipalities.Find(m => m.Name == name).FirstOrDefault();
-            if (municipality == null)
-            {
-                Console.WriteLine("No municipality with name '{0}' exists.", name);
-                return 0;
-            }
-            int municipalityId = municipality.MunicipalityId;
-            var cases = Client.Citizens.Find(c => c.Municipality_id == municipalityId && c.Tests.Any(t => t.Date >= activeDate && t.Result == "positive")).ToList();
-
-            return cases.Count;
-        }
-
-        public static void ActiveCovidCasesPerMunicipality()
-        {
-            var municipalities = Client.Municipalities.Find(m => m._id != null).ToList();
-
-            Console.WriteLine("Municipality | Total number of Covid19 cases");
-            Console.WriteLine("============================================");
-
-            foreach (var municipality in municipalities)
-            {
-                int cases = ActiveCovidCasesByMunicipalityName(municipality.Name);
-                Console.WriteLine("{0}: {1}", municipality.Name, cases);
-            }
-        }
-
-        public static void ActiveCovidCasesSex()
-        {
-            var maleCases = Client.Citizens.Find(c => c.Sex == "male" && c.Tests.Any(t => t.Result == "positive")).ToList();
-            var femaleCases = Client.Citizens.Find(c => c.Sex == "female" && c.Tests.Any(t => t.Result == "positive")).ToList();
-            var eitherCases = Client.Citizens.Find(c => c.Sex == "either" && c.Tests.Any(t => t.Result == "positive")).ToList();
-            
-            int maleCount = maleCases.Count;
-            int femaleCount = femaleCases.Count;
-            int eitherCount = eitherCases.Count;
-
-            Console.WriteLine("Males infected: {0}", maleCount);
-            Console.WriteLine("Females infected: {0}", femaleCount);
-            Console.WriteLine("Either infected: {0}", eitherCount);
-        }
-
-        public static int ActiveCovidCasesAge(int minAge, int maxAge)
-        {
-            var cases = Client.Citizens
-                .Find(c => c.Age >= minAge && c.Age <= maxAge && c.Tests.Any(t => t.Result == "positive")).ToList();
-
-            return cases.Count;
-        }
 
         public static void Seed()
         {
             /*--!Delete Collections*/
             Client.Citizens.DeleteMany(c => c._id != null);
             Client.Municipalities.DeleteMany(m => m._id != null);
+            Client.Locations.DeleteMany(_ => true);
 
             /*--!Seed Citizens*/
             foreach (var citizen in Citizens)
@@ -667,7 +483,10 @@ namespace MongoDbCoronaTest
                 updatedCitizen.Municipality_id = municipalities[index].MunicipalityId;
                 Client.Citizens.InsertOne(updatedCitizen);
             }
+
+            Client.Locations.InsertMany(Locations);
         }
+
         #endregion
     }
 }
