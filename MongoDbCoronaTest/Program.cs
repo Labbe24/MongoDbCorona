@@ -251,6 +251,115 @@ namespace MongoDbCoronaTest
         };
         #endregion
 
+        #region TestCenters
+        public static readonly TestCenter[] TestCenters =
+        {
+            new TestCenter(1, 10, 12345678, "test@center1.com"),
+            new TestCenter(2, 10, 12345678, "test@center2.com"),
+            new TestCenter(3, 10, 12345678, "test@center3.com"),
+            new TestCenter(4, 10, 12345678, "test@center4.com"),
+            new TestCenter(5, 10, 12345678, "test@center5.com"),
+            new TestCenter(6, 10, 12345678, "test@center6.com"),
+            new TestCenter(7, 10, 12345678, "test@center7.com"),
+            new TestCenter(8, 10, 12345678, "test@center8.com"),
+            new TestCenter(9, 10, 12345678, "test@center9.com"),
+            new TestCenter(10, 10, 12345678, "test@center10.com"),
+            new TestCenter(11, 10, 12345678, "test@center11.com"),
+            new TestCenter(12, 10, 12345678, "test@center12.com"),
+            new TestCenter(13, 10, 12345678, "test@center13.com"),
+            new TestCenter(14, 10, 12345678, "test@center14.com"),
+            new TestCenter(15, 10, 12345678, "test@center15.com"),
+            new TestCenter(16, 10, 12345678, "test@center16.com"),
+            new TestCenter(17, 10, 12345678, "test@center17.com"),
+            new TestCenter(18, 10, 12345678, "test@center18.com"),
+            new TestCenter(19, 10, 12345678, "test@center19.com"),
+            new TestCenter(20, 10, 12345678, "test@center20.com"),
+            new TestCenter(21, 10, 12345678, "test@center21.com"),
+            new TestCenter(22, 10, 12345678, "test@center22.com"),
+            new TestCenter(23, 10, 12345678, "test@center23.com"),
+            new TestCenter(24, 10, 12345678, "test@center24.com"),
+            new TestCenter(25, 10, 12345678, "test@center25.com"),
+            new TestCenter(26, 10, 12345678, "test@center26.com"),
+            new TestCenter(27, 10, 12345678, "test@center27.com"),
+            new TestCenter(28, 10, 12345678, "test@center28.com"),
+            new TestCenter(29, 10, 12345678, "test@center29.com"),
+            new TestCenter(30, 10, 12345678, "test@center30.com"),
+            new TestCenter(31, 10, 12345678, "test@center31.com"),
+            new TestCenter(32, 10, 12345678, "test@center32.com"),
+            new TestCenter(33, 10, 12345678, "test@center33.com"),
+            new TestCenter(34, 10, 12345678, "test@center34.com"),
+            new TestCenter(35, 10, 12345678, "test@center35.com"),
+            new TestCenter(36, 10, 12345678, "test@center36.com"),
+            new TestCenter(37, 10, 12345678, "test@center37.com"),
+            new TestCenter(38, 10, 12345678, "test@center38.com"),
+            new TestCenter(39, 10, 12345678, "test@center39.com"),
+            new TestCenter(40, 10, 12345678, "test@center40.com"),
+            new TestCenter(41, 10, 12345678, "test@center41.com"),
+            new TestCenter(42, 10, 12345678, "test@center42.com"),
+            new TestCenter(43, 10, 12345678, "test@center43.com"),
+            new TestCenter(44, 10, 12345678, "test@center44.com"),
+            new TestCenter(45, 10, 12345678, "test@center45.com"),
+            new TestCenter(46, 10, 12345678, "test@center46.com"),
+            new TestCenter(47, 10, 12345678, "test@center47.com"),
+            new TestCenter(48, 10, 12345678, "test@center48.com"),
+            new TestCenter(49, 10, 12345678, "test@center49.com"),
+            new TestCenter(50, 10, 12345678, "test@center50.com"),
+            new TestCenter(51, 10, 12345678, "test@center51.com"),
+            new TestCenter(52, 10, 12345678, "test@center52.com"),
+            new TestCenter(53, 10, 12345678, "test@center53.com"),
+            new TestCenter(54, 10, 12345678, "test@center54.com"),
+            new TestCenter(55, 10, 12345678, "test@center55.com"),
+            new TestCenter(56, 10, 12345678, "test@center56.com"),
+            new TestCenter(57, 10, 12345678, "test@center57.com"),
+            new TestCenter(58, 10, 12345678, "test@center58.com"),
+            new TestCenter(59, 10, 12345678, "test@center59.com"),
+            new TestCenter(60, 10, 12345678, "test@center60.com"),
+            new TestCenter(61, 10, 12345678, "test@center61.com"),
+            new TestCenter(62, 10, 12345678, "test@center62.com"),
+            new TestCenter(63, 10, 12345678, "test@center63.com"),
+            new TestCenter(64, 10, 12345678, "test@center64.com"),
+            new TestCenter(65, 10, 12345678, "test@center65.com"),
+            new TestCenter(66, 10, 12345678, "test@center66.com"),
+            new TestCenter(67, 10, 12345678, "test@center67.com"),
+            new TestCenter(68, 10, 12345678, "test@center68.com"),
+            new TestCenter(69, 10, 12345678, "test@center69.com"),
+            new TestCenter(70, 10, 12345678, "test@center70.com"),
+            new TestCenter(71, 10, 12345678, "test@center71.com"),
+            new TestCenter(72, 10, 12345678, "test@center72.com"),
+            new TestCenter(73, 10, 12345678, "test@center73.com"),
+            new TestCenter(74, 10, 12345678, "test@center74.com"),
+            new TestCenter(75, 10, 12345678, "test@center75.com"),
+            new TestCenter(76, 10, 12345678, "test@center76.com"),
+            new TestCenter(77, 10, 12345678, "test@center77.com"),
+            new TestCenter(78, 10, 12345678, "test@center78.com"),
+            new TestCenter(79, 10, 12345678, "test@center79.com"),
+            new TestCenter(80, 10, 12345678, "test@center80.com"),
+            new TestCenter(81, 10, 12345678, "test@center81.com"),
+            new TestCenter(82, 10, 12345678, "test@center82.com"),
+            new TestCenter(83, 10, 12345678, "test@center83.com"),
+            new TestCenter(84, 10, 12345678, "test@center84.com"),
+            new TestCenter(85, 10, 12345678, "test@center85.com"),
+            new TestCenter(86, 10, 12345678, "test@center86.com"),
+            new TestCenter(87, 10, 12345678, "test@center87.com"),
+            new TestCenter(88, 10, 12345678, "test@center88.com"),
+            new TestCenter(89, 10, 12345678, "test@center89.com"),
+            new TestCenter(90, 10, 12345678, "test@center90.com"),
+            new TestCenter(91, 10, 12345678, "test@center91.com"),
+            new TestCenter(92, 10, 12345678, "test@center92.com"),
+            new TestCenter(93, 10, 12345678, "test@center93.com"),
+            new TestCenter(94, 10, 12345678, "test@center94.com"),
+            new TestCenter(95, 10, 12345678, "test@center95.com"),
+            new TestCenter(96, 10, 12345678, "test@center96.com"),
+            new TestCenter(97, 10, 12345678, "test@center97.com"),
+            new TestCenter(98, 10, 12345678, "test@center98.com"),
+            new TestCenter(99, 10, 12345678, "test@center99.com")
+        };
+
+        #endregion
+
+
+        
+
         public static DbClient Client = new DbClient(new MongoClient());
 
         static void Main(string[] args)
@@ -428,6 +537,7 @@ namespace MongoDbCoronaTest
                         foreach (var citizen in citizens)
                         {
                             Console.WriteLine("-------------------------------------------------------");
+                            Console.WriteLine($"ID: {citizen.CitizenId}");
                             Console.WriteLine($"Name: {citizen.Firstname} {citizen.Lastname}");
                             Console.WriteLine($"SSN : {citizen.SSN}");
                             Console.WriteLine("-------------------------------------------------------");
@@ -451,21 +561,19 @@ namespace MongoDbCoronaTest
         public static void Seed()
         {
             /*--!Delete Collections*/
-            Client.Citizens.DeleteMany(c => c._id != null);
-            Client.Municipalities.DeleteMany(m => m._id != null);
+            Client.Citizens.DeleteMany(_ => true);
+            Client.Municipalities.DeleteMany(_ => true);
             Client.Locations.DeleteMany(_ => true);
+            Client.TestCenters.DeleteMany(_ => true);
 
             /*--!Seed Citizens*/
-            foreach (var citizen in Citizens)
-            {
-                Client.Citizens.InsertOne(citizen);
-            }
+            Client.Citizens.InsertMany(Citizens);
 
             /*--!Seed Municipalities*/
-            foreach (var municipality in Municipalities)
-            {
-                Client.Municipalities.InsertOne(municipality);
-            }
+            Client.Municipalities.InsertMany(Municipalities);
+
+            /*--!Seed TestCenters*/
+            Client.TestCenters.InsertMany(TestCenters);
 
             /*--!Seed Municipalities with Citizens*/
             var rand = new Random();

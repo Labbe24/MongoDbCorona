@@ -33,7 +33,7 @@ namespace MongoDbCoronaTest.Services
 
             if (location != null)
             {
-                var updatedLocation = client.Locations.FindOneAndDelete(l => l == location);
+                var updatedLocation = client.Locations.FindOneAndDelete(l => l.LocationId == location.LocationId);
                 updatedLocation.Registered.Add(new Registered { CitizenId = citizenId, Date = DateTime.Now });
                 client.Locations.InsertOne(updatedLocation);
             }

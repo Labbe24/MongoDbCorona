@@ -35,12 +35,19 @@ namespace MongoDbCoronaTest.Services
         public void TestAllCitizens()
         {
             var rand = new Random();
-            int range = (int)client.TestCenters.CountDocuments(t => t.TestCenterId >= 0);
-            var citizens = client.Citizens.Find(c => c.CitizenId > 0).ToList();
+            int range = (int)client.TestCenters.CountDocuments(_ => true);
+
+            if(range <= 0)
+            {
+                Console.WriteLine("No TestCenters exists");
+                return;
+            }
+
+            var citizens = client.Citizens.Find(_ => true).ToList();
 
             foreach (var citizen in citizens)
             {
-                TestCitizen(citizen.CitizenId, rand.Next(0, range + 1));
+                TestCitizen(citizen.CitizenId, rand.Next(1, range + 1));
             }
         }
     }
